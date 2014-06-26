@@ -43,7 +43,6 @@ union RegexBannerStateUnion
 
   RegexBannerStateUnion()
     : state_allocator() { }
-  ~RegexBannerStateUnion() { delete detail;}  
 };
 
 

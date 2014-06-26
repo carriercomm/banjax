@@ -84,18 +84,9 @@ RegexManager::parse_request(string ip, string ats_record)
           
         /* first we check if we already have a state for this ip */
         cur_ip_state.state_allocator =  ip_database->get_ip_state(ip, REGEX_BANNER_FILTER_ID);
-        cout<<"size before creation"<<endl;
-        cout<<sizeof(cur_ip_state)<<endl;
 	    if(cur_ip_state.detail == NULL){
-        cout<<"test"<<endl;     
           cur_ip_state.detail = new std::vector<RegexState>(rated_banning_regexes.size());
         }
-        cout<<"vector set: "<<endl;
-        cout<< (*cur_ip_state.detail).size()<<endl;
-        cout<< (*cur_ip_state.detail).size()<<endl;
-        cout<< &cur_ip_state.detail[0]<<endl;
-        cout<< &cur_ip_state.detail<<endl;
-        cout<<sizeof(cur_ip_state)<<endl;
 
  
         if ((*cur_ip_state.detail)[(*it)->id].begin_msec == 0) {//We don't have a record 
@@ -103,23 +94,23 @@ RegexManager::parse_request(string ip, string ats_record)
           (*cur_ip_state.detail)[(*it)->id].rate = 0;
           ip_database->set_ip_state(ip, REGEX_BANNER_FILTER_ID, cur_ip_state.state_allocator);
 
-        } /*else { //we have a record, update the rate and ban if necessary.
+        } else { //we have a record, update the rate and ban if necessary.
           //we move the interval by the differences of the "begin_in_ms - cur_time_msec - interval*1000"
           //if it is less than zero we don't do anything
-          long time_window_movement = cur_time_msec - cur_ip_state.detail[(*it)->id].begin_msec - (*it)->interval;
+          long time_window_movement = cur_time_msec - (*cur_ip_state.detail)[(*it)->id].begin_msec - (*it)->interval;
           if (time_window_movement > 0) { //we need to move
-            cur_ip_state.detail[(*it)->id].begin_msec += time_window_movement;
-            cur_ip_state.detail[(*it)->id].rate= cur_ip_state.detail[(*it)->id].rate - (cur_ip_state.detail[(*it)->id].rate * time_window_movement - 1)/(double) (*it)->interval;
-            cur_ip_state.detail[(*it)->id].rate =  cur_ip_state.detail[(*it)->id].rate < 0 ? 0 : cur_ip_state.detail[(*it)->id].rate; //just to make sure
+            (*cur_ip_state.detail)[(*it)->id].begin_msec += time_window_movement;
+            (*cur_ip_state.detail)[(*it)->id].rate = (*cur_ip_state.detail)[(*it)->id].rate - ((*cur_ip_state.detail)[(*it)->id].rate * time_window_movement - 1)/(double) (*it)->interval;
+            (*cur_ip_state.detail)[(*it)->id].rate =  (*cur_ip_state.detail)[(*it)->id].rate < 0 ? 0 : (*cur_ip_state.detail)[(*it)->id].rate; //just to make sure
           }
           else {
             //we are still in the same interval so just increase the hit by 1
-            cur_ip_state.detail[(*it)->id].rate += 1/(double) (*it)->interval;
+            (*cur_ip_state.detail)[(*it)->id].rate += 1/(double) (*it)->interval;
           }
-          TSDebug(BANJAX_PLUGIN_NAME, "with rate %f /msec", cur_ip_state.detail[(*it)->id].rate);
+          TSDebug(BANJAX_PLUGIN_NAME, "with rate %f /msec", (*cur_ip_state.detail)[(*it)->id].rate);
           ip_database->set_ip_state(ip, REGEX_BANNER_FILTER_ID, cur_ip_state.state_allocator);
         }
-        if (cur_ip_state.detail[(*it)->id].rate >= (*it)->rate) {
+        if ((*cur_ip_state.detail)[(*it)->id].rate >= (*it)->rate) {
           TSDebug(BANJAX_PLUGIN_NAME, "exceeding excessive rate %f /msec", (*it)->rate);
           //clear the record to avoid multiple reporting to swabber
           //we are not clearing the state cause it is not for sure that
@@ -129,7 +120,7 @@ RegexManager::parse_request(string ip, string ats_record)
           // ip_database->set_ip_state(ip, REGEX_BANNER_FILTER_ID, cur_ip_state.state_allocator);
           return make_pair(REGEX_MATCHED, (*it));
         }
-        */
+        
       }
   }
 

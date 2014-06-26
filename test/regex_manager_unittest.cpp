@@ -114,12 +114,12 @@ class RegexManagerTest : public testing::Test {
     mock_config << "}," << endl;
     mock_config << "{ rule = \"flooding ban\"; " << endl;
     mock_config << "regex = \".*flooding_ban.*\";" << endl;
-    mock_config << "interval = 30; " << endl;
+    mock_config << "interval = 1; " << endl;
     mock_config << "hits_per_interval = 10;" << endl;
     mock_config << "}," << endl;
     mock_config << "{ rule = \"flooding ban 2\"; " << endl;
     mock_config << "regex = \".*flooding_diff_ban.*\";" << endl;
-    mock_config << "interval = 30; " << endl;
+    mock_config << "interval = 1; " << endl;
     mock_config << "hits_per_interval = 10;" << endl;
     mock_config << "});" << endl;
     mock_config << "};" << endl;
@@ -217,7 +217,7 @@ TEST_F(RegexManagerTest, miss)
    make up a fake GET request and check that the manager is not banning when
    the request method changes to POST despite passing the allowed rate
  */
-TEST_F(RegexManagerTest, post_get_counter)
+TEST_F(RegexManagerTest, per_regex_counter)
 {
 
   open_config();
