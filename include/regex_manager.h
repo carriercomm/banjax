@@ -34,7 +34,7 @@ struct RegexState {
   RegexState() { begin_msec = 0; rate = 0.0;}  
 };
 
-/*typedef std::vector<RegexState>* RegexBannerState;
+typedef std::vector<RegexState>* RegexBannerState;
 
 union RegexBannerStateUnion
 {
@@ -45,18 +45,7 @@ union RegexBannerStateUnion
     : state_allocator() { }
   ~RegexBannerStateUnion() { delete detail;}  
 };
-*/
 
-class RegexBannerStateUnion
-{
-public:
-  std::vector<RegexState> detail;
-  FilterState state_allocator;
-
-  RegexBannerStateUnion()
-    : state_allocator() { }
-
-};
 
 class RegexManager : public BanjaxFilter
 {
@@ -95,7 +84,6 @@ class RegexManager : public BanjaxFilter
 
   */
 
-  RegexBannerStateUnion cur_ip_state;
  RegexManager(const std::string& banjax_dir, const libconfig::Setting& main_root, IPDatabase* global_ip_database, SwabberInterface* global_swabber_interface)
    :BanjaxFilter::BanjaxFilter(banjax_dir, main_root, REGEX_BANNER_FILTER_ID, REGEX_BANNER_FILTER_NAME),
     forbidden_message("<html><header></header><body>Forbidden</body></html>"),

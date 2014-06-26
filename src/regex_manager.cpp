@@ -35,10 +35,7 @@ RegexManager::load_config(libconfig::Setting& cfg)
      const libconfig::Setting &banned_regexes_list = cfg["banned_regexes"];
  
      unsigned int count = banned_regexes_list.getLength();
-     if(cur_ip_state.detail.empty()){
-        cur_ip_state.detail.resize(banned_regexes_list.getLength());
-     }
-     //now we compile all of them and store them for later use
+      //now we compile all of them and store them for later use
      for(unsigned int i = 0; i < count; i++) {
        unsigned int cur_id = i;
        string cur_rule = (const char*) banned_regexes_list[i]["rule"];
@@ -81,18 +78,32 @@ RegexManager::parse_request(string ip, string ats_record)
 
         /* we need to check the rate condition here */
         //getting current time in msec
+        RegexBannerStateUnion cur_ip_state;
         timeval cur_time; gettimeofday(&cur_time, NULL);
         long cur_time_msec = cur_time.tv_sec * 1000 + cur_time.tv_usec / 1000.0;
           
         /* first we check if we already have a state for this ip */
         cur_ip_state.state_allocator =  ip_database->get_ip_state(ip, REGEX_BANNER_FILTER_ID);
-	
-        if (cur_ip_state.detail[(*it)->id].begin_msec == 0) {//We don't have a record 
-          cur_ip_state.detail[(*it)->id].begin_msec = cur_time_msec;
-          cur_ip_state.detail[(*it)->id].rate = 0;
+        cout<<"size before creation"<<endl;
+        cout<<sizeof(cur_ip_state)<<endl;
+	    if(cur_ip_state.detail == NULL){
+        cout<<"test"<<endl;     
+          cur_ip_state.detail = new std::vector<RegexState>(rated_banning_regexes.size());
+        }
+        cout<<"vector set: "<<endl;
+        cout<< (*cur_ip_state.detail).size()<<endl;
+        cout<< (*cur_ip_state.detail).size()<<endl;
+        cout<< &cur_ip_state.detail[0]<<endl;
+        cout<< &cur_ip_state.detail<<endl;
+        cout<<sizeof(cur_ip_state)<<endl;
+
+ 
+        if ((*cur_ip_state.detail)[(*it)->id].begin_msec == 0) {//We don't have a record 
+          (*cur_ip_state.detail)[(*it)->id].begin_msec = cur_time_msec;
+          (*cur_ip_state.detail)[(*it)->id].rate = 0;
           ip_database->set_ip_state(ip, REGEX_BANNER_FILTER_ID, cur_ip_state.state_allocator);
 
-        } else { //we have a record, update the rate and ban if necessary.
+        } /*else { //we have a record, update the rate and ban if necessary.
           //we move the interval by the differences of the "begin_in_ms - cur_time_msec - interval*1000"
           //if it is less than zero we don't do anything
           long time_window_movement = cur_time_msec - cur_ip_state.detail[(*it)->id].begin_msec - (*it)->interval;
@@ -118,6 +129,7 @@ RegexManager::parse_request(string ip, string ats_record)
           // ip_database->set_ip_state(ip, REGEX_BANNER_FILTER_ID, cur_ip_state.state_allocator);
           return make_pair(REGEX_MATCHED, (*it));
         }
+        */
       }
   }
 
