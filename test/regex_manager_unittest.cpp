@@ -49,6 +49,7 @@
 #include <gtest/gtest.h> //google test
 
 #include <ts/ts.h>
+#include <unistd.h>
 
 #include "util.h"
 #include "banjax.h"
@@ -231,8 +232,9 @@ TEST_F(RegexManagerTest, per_regex_counter)
   mock_transaction[TransactionMuncher::UA] = "neverhood browsing and co";
   FilterResponse cur_filter_result = FilterResponse::GO_AHEAD_NO_COMMENT;
 
-  for ( int i=0; i<2; i++ ) {
+  for ( int i=0; i<12; i++ ) {
     cur_filter_result = test_regex_manager->execute(mock_transaction);
+    usleep( 1 * 1000  );
   }
 
   mock_transaction[TransactionMuncher::URL] = "http://flooding_diff_ban/";
